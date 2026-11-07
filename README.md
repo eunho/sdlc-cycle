@@ -23,7 +23,7 @@ The skill checks its own dependencies on first use and installs whatever is miss
 
 ```bash
 npx skills add mattpocock/skills    -g -a pi -a claude-code -a codex -y   # spec, build, review, deliver, retro
-npx skills add backnotprop/pstack   -g -a pi -a claude-code -a codex -y   # tdd, diagnosing-bugs, conflict resolution
+npx skills add backnotprop/pstack   -g -a pi -a claude-code -a codex -y   # principles, craft/verification
 npx skills add herdrdev/herdr-core  -g -a pi -a claude-code -a codex -y   # hc dispatch syntax
 ```
 
