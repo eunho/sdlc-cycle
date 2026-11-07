@@ -16,7 +16,7 @@ the workers' questions, fails over when an agent dies or runs out of credits, an
 ## Install
 
 ```bash
-npx skills add <owner>/sdlc-cycle -g -a pi -a claude-code -a codex -y
+npx skills add eunho/sdlc-cycle -g -a pi -a claude-code -a codex -y
 ```
 
 The skill checks its own dependencies on first use and installs whatever is missing:
