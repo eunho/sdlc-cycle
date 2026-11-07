@@ -17,7 +17,14 @@ the workers' questions, fails over when an agent dies or runs out of credits, an
 
 ```bash
 npx skills add <owner>/sdlc-cycle -g -a pi -a claude-code -a codex -y
-npx skills add herdrdev/herdr-core -g -a pi -a claude-code -a codex -y   # dispatch syntax
+```
+
+The skill checks its own dependencies on first use and installs whatever is missing:
+
+```bash
+npx skills add mattpocock/skills    -g -a pi -a claude-code -a codex -y   # spec, build, review, deliver, retro
+npx skills add backnotprop/pstack   -g -a pi -a claude-code -a codex -y   # tdd, diagnosing-bugs, conflict resolution
+npx skills add herdrdev/herdr-core  -g -a pi -a claude-code -a codex -y   # hc dispatch syntax
 ```
 
 Then, in the repo, in a herdr terminal:
@@ -32,6 +39,8 @@ runs preflight, and becomes the orchestrator.
 
 ## What the skill does, in order
 
+0. **Dependencies** — checks for the eighteen role skills, installs `mattpocock/skills` or
+   `backnotprop/pstack` only if something is missing, and stops if an install fails.
 1. **Templates** — copies `templates/*.md` into `${HERDR_CORE_TEMPLATES:-~/.config/herdr-core/templates}`
    if missing, then checks `hc templates` reads them.
 2. **Preflight** — git repo, clean tree, `origin` with `main`, hc reachable, `$HC_TERMINAL_ID` set.
@@ -70,8 +79,12 @@ role's file.
 ## Requirements
 
 - [herdr-core](https://github.com/herdrdev/herdr-core) (`hc`) with `claude`, `codex` and `pi` on PATH
-- The role skills: mattpocock (`grill-with-docs`, `implement`, `code-review`, `pr`, `to-spec`,
-  `to-tickets`, `retro`) and pstack (`tdd`, `diagnosing-bugs`, `resolving-merge-conflicts`)
+- [mattpocock/skills](https://github.com/mattpocock/skills) — `grill-with-docs`, `implement`,
+  `code-review`, `pr`, `to-spec`, `to-tickets`, `triage`, `wayfinder`, `domain-modeling`,
+  `codebase-design`, `setup-matt-pocock-skills`
+- [backnotprop/pstack](https://github.com/backnotprop/pstack) — `tdd`, `diagnosing-bugs`,
+  `resolving-merge-conflicts`
+- `retro`, `writing-for-agents`, `principle-encode-lessons-in-structure`, and `herdr-core`
 - A git repo with an `origin` that has `main`
 
 ## License

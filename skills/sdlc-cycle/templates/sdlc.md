@@ -12,7 +12,11 @@ STEP 0 — bootstrap (once, at the start)
   Put `--label herdr.space=<sp> --label herdr.tab=<tb>` on every dispatch so each worker opens in a
   pane of your tab. No labels of your own (headless start) → omit them, workers stay hidden.
 - Detect the repo's check commands once (typecheck, lint, test) from package.json/Makefile/CI, and
-  record them in docs/sdlc/<slug>/state.md. Nothing else in the loop gets to invent them.
+  record the exact command lines in docs/sdlc/<slug>/state.md. Nothing else in the loop gets to
+  invent them; if the repo has none, ask the human once and record the answer.
+- Judge the checks you found before you trust them: a syntax-only lint, or a typecheck that skips
+  tests, is weak evidence. Say so in the gate line — "lint pass (syntax only)" — instead of implying
+  coverage the repo does not have.
 - If docs/agents/issue-tracker.md is missing, dispatch `spec` with "run setup-matt-pocock-skills first".
 
 WORKERS (one ticket each, all in the same worktree)
@@ -37,14 +41,18 @@ exit contract `report with hc send $HC_TERMINAL_ID "<one line + artifact path>"`
 
 SKILL INVOCATION. Claude only invokes a skill when the message STARTS with its slash command, so each
 claude template's body begins with one: /grill-with-docs (spec), /implement (build), /pr (deliver),
-/code-review (review-claude). Never rewrite that first line, and never tell claude to "read a skill
+/code-review (review-fallback). Never rewrite that first line, and never tell claude to "read a skill
 file" — it will read it and not invoke it. Your task text is additive: artifacts, scope, artifact to
-write, exit contract. Codex invokes skills as $code-review / $implement, and its template body already
-starts that way.
+write, exit contract. Codex templates lead with $code-review / $implement / $grill-with-docs / $pr; if
+codex does not take the $name form, it matches the skill by description anyway — the body still
+governs, so do not rewrite those lines either.
 
 INVARIANTS
 - One ticket per cycle. One worktree per ticket: git worktree add ../<repo>.t<id> -b t<id> origin/main
   (run it with `hc exec --cwd <repo> -- git worktree add ...`). Record the path in state.md.
+- Resuming after a crash: read state.md first. If the worktree still exists, reuse it; if it is gone
+  but branch t<id> remains, `git worktree add ../<repo>.t<id> t<id>`. Only create a new branch on a
+  genuinely fresh ticket — `-b` on a rerun fails, and that failure is not a reason to reset anything.
 - One coding agent at a time per worktree. Before dispatching the next role, `hc get <t>` must not
   be `working`, and review/build must never overlap.
 - Reuse a terminal across fix rounds: `hc send <t> "findings: <path>"`. Do not relaunch a live worker.
@@ -62,8 +70,9 @@ CYCLE — keep state.md current after every gate so a restart can resume
    `hc exec --cwd <worktree> --timeout 600 -- <cmd>` (60s default is too short; long suites can run
    as `hc run --bg --name <slug>-checks --cwd <worktree> "<cmd>" && hc wait`).
    Red → back to build in the same terminal with the exact failing output. Never dispatch review on red.
-4  review → gate: review.md has 0 blockers and 0 majors, and your deterministic gate is green again
-   after its fixes. Minors/nits are reported, not blocking.
+4  review → gate: review.md has 0 blockers and 0 majors, the gate is green again after its fixes, and
+   those fixes are committed on the ticket branch (`git log --oneline origin/main..HEAD`) with nothing
+   uncommitted. Minors/nits are reported, not blocking. A dirty tree here breaks the rebase in step 5.
 5  Rebase: `git fetch origin`, then `git rebase origin/main`. Conflicts → dispatch deliver with
    resolving-merge-conflicts. Never `--abort`, never force-push.
 6  deliver → gate: pr.md has summary, evidence, merge danger; branch pushed; checks green.

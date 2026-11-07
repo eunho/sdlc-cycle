@@ -9,13 +9,42 @@ One ticket, end to end: `spec → build → review → deliver`, gated by the or
 human only answering the questions that matter. The contract lives in the templates, not here:
 this skill gathers the inputs, installs the templates if needed, checks the repo, and starts the loop.
 
-## Requires
+## 0. Dependencies — check first, install only what is missing
 
-- `hc` (herdr-core CLI) and a terminal started inside herdr, so `$HC_TERMINAL_ID` is set.
-- The `herdr-core` skill, for the dispatch syntax: `npx skills add herdrdev/herdr-core -g -a pi -a claude-code -a codex -y`
-- The role skills the templates invoke: mattpocock (`grill-with-docs`, `implement`, `code-review`,
-  `pr`, `to-spec`, `to-tickets`, `retro`) and pstack (`tdd`, `diagnosing-bugs`, `resolving-merge-conflicts`).
-- The role templates. They ship in `templates/` next to this file; step 1 installs them.
+`hc` (herdr-core CLI), and a terminal started inside herdr so `$HC_TERMINAL_ID` is set.
+
+The role templates invoke skills by name, so these must exist as skill directories:
+
+```
+mattpocock/skills    grill-with-docs implement code-review pr to-spec to-tickets
+                     triage wayfinder domain-modeling codebase-design setup-matt-pocock-skills
+backnotprop/pstack   tdd diagnosing-bugs resolving-merge-conflicts
+retro role           retro writing-for-agents principle-encode-lessons-in-structure
+herdr-core           herdr-core  (hc dispatch syntax)
+```
+
+```sh
+missing=$(for s in grill-with-docs implement code-review pr to-spec to-tickets triage wayfinder \
+  domain-modeling codebase-design setup-matt-pocock-skills tdd diagnosing-bugs \
+  resolving-merge-conflicts retro writing-for-agents principle-encode-lessons-in-structure \
+  herdr-core; do
+  [ -e "$HOME/.agents/skills/$s" ] || [ -e "$HOME/.claude/skills/$s" ] || echo "$s"
+done)
+echo "$missing"
+```
+
+Empty → go to templates. Anything missing → say which in one line, then install the pack that
+provides it, globally, so pi, claude and codex all see it:
+
+```bash
+npx skills add mattpocock/skills    -g -a pi -a claude-code -a codex -y
+npx skills add backnotprop/pstack   -g -a pi -a claude-code -a codex -y   # tdd, diagnosing-bugs, conflicts
+npx skills add herdrdev/herdr-core  -g -a pi -a claude-code -a codex -y   # hc dispatch syntax
+```
+
+One skill missing from a pack you already have → `--skill <name>` for just that one. An install that
+fails stops the cycle: a role without its skill runs the task without its method, which is worse than
+not starting.
 
 ## Inputs
 
