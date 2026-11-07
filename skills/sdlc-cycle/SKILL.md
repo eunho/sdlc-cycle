@@ -17,18 +17,21 @@ The role templates invoke skills by name, so these must exist as skill directori
 `~/.agents/skills` (or `%USERPROFILE%\.agents\skills` on Windows, or `~/.claude/skills`):
 
 ```
-mattpocock/skills    grill-with-docs implement code-review pr to-spec to-tickets
-                     triage wayfinder domain-modeling codebase-design setup-matt-pocock-skills
-backnotprop/pstack   tdd diagnosing-bugs resolving-merge-conflicts
-retro role           retro writing-for-agents principle-encode-lessons-in-structure
-herdr-core           herdr-core  (hc dispatch syntax)
+mattpocock/skills    grill-with-docs implement code-review pr to-spec to-tickets triage wayfinder
+                     domain-modeling codebase-design setup-matt-pocock-skills
+                     tdd diagnosing-bugs retro writing-for-agents
+backnotprop/pstack   principle-encode-lessons-in-structure (and the craft/verification companions)
+herdrdev/herdr-core  herdr-core  (hc dispatch syntax)
 ```
+
+Checked against the published repos: `tdd` ships in both packs. `resolving-merge-conflicts` is
+**optional** — it is listed on skills.sh but no longer in the mattpocock or pstack trees, so nothing
+requires it; the deliver role carries the conflict rules inline.
 
 ```sh
 missing=$(for s in grill-with-docs implement code-review pr to-spec to-tickets triage wayfinder \
   domain-modeling codebase-design setup-matt-pocock-skills tdd diagnosing-bugs \
-  resolving-merge-conflicts retro writing-for-agents principle-encode-lessons-in-structure \
-  herdr-core; do
+  retro writing-for-agents principle-encode-lessons-in-structure herdr-core; do
   [ -e "$HOME/.agents/skills/$s" ] || [ -e "$HOME/.claude/skills/$s" ] || echo "$s"
 done)
 echo "$missing"

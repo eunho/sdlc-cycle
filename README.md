@@ -81,10 +81,11 @@ role's file.
 - [herdr-core](https://github.com/herdrdev/herdr-core) (`hc`) with `claude`, `codex` and `pi` on PATH
 - [mattpocock/skills](https://github.com/mattpocock/skills) — `grill-with-docs`, `implement`,
   `code-review`, `pr`, `to-spec`, `to-tickets`, `triage`, `wayfinder`, `domain-modeling`,
-  `codebase-design`, `setup-matt-pocock-skills`
-- [backnotprop/pstack](https://github.com/backnotprop/pstack) — `tdd`, `diagnosing-bugs`,
-  `resolving-merge-conflicts`
-- `retro`, `writing-for-agents`, `principle-encode-lessons-in-structure`, and `herdr-core`
+  `codebase-design`, `setup-matt-pocock-skills`, `tdd`, `diagnosing-bugs`
+- [backnotprop/pstack](https://github.com/backnotprop/pstack) — `principle-encode-lessons-in-structure`
+  and the craft/verification companions (`tdd` ships here too)
+- `retro` and `writing-for-agents` from mattpocock, `herdr-core` from herdrdev
+- optional: `resolving-merge-conflicts` — no longer in either tree; the deliver role inlines the rules
 - A git repo with an `origin` that has `main`
 
 ## License

@@ -8,9 +8,10 @@ You are the DELIVER role. Worktree, base branch and ticket branch come from your
 docs/sdlc/<slug>/{spec.md,build.md,review.md} first. The skill above is invoked; the rest is its
 context and the order of work.
 
-1. `git fetch origin`, then `git rebase origin/main`. On conflict, invoke /resolving-merge-conflicts:
-   understand what each side intended, resolve preserving both intents, keep the suite green, finish
-   the rebase. Never `--abort`, never `--skip` a hunk you do not understand, never force-push.
+1. `git fetch origin`, then `git rebase origin/main`. On conflict, invoke /resolving-merge-conflicts
+   when your agent ships it; when it does not, do the same thing by hand: read the commits and PRs on
+   both sides, understand each intent, resolve preserving both, keep the suite green, finish the
+   rebase. Never `--abort`, never `--skip` a hunk you do not understand, never force-push.
 2. Run the project's typecheck, lint and tests after the rebase. Red → stop and report the exact output.
 3. Write the PR body per /pr: summary of what changed and why, evidence (the commands you ran and their
    output), merge danger, rollback. The body opens with the goal in the user's terms.
