@@ -13,7 +13,8 @@ this skill gathers the inputs, installs the templates if needed, checks the repo
 
 `hc` (herdr-core CLI), and a terminal started inside herdr so `$HC_TERMINAL_ID` is set.
 
-The role templates invoke skills by name, so these must exist as skill directories:
+The role templates invoke skills by name, so these must exist as skill directories in
+`~/.agents/skills` (or `%USERPROFILE%\.agents\skills` on Windows, or `~/.claude/skills`):
 
 ```
 mattpocock/skills    grill-with-docs implement code-review pr to-spec to-tickets
@@ -58,18 +59,32 @@ which one you picked in one line. Ask only if two tickets are equally ready.
 
 ## 1. Templates
 
-Target directory: `${HERDR_CORE_TEMPLATES:-$HOME/.config/herdr-core/templates}`.
+Target directory, in this order:
+
+1. `$HERDR_CORE_TEMPLATES` when set — honour it, wherever you are.
+2. Windows: `%APPDATA%\herdr-core\templates` (verified: hc on Windows reads roaming `APPDATA`, not
+   `%USERPROFILE%\.config` and not `%LOCALAPPDATA%`).
+3. macOS/Linux: `~/.config/herdr-core/templates`.
 
 The `templates/` folder beside this SKILL.md holds all ten role templates. For each file there, if
 the target does not have it, copy it in. Never overwrite a template the user already has — their
 edits win — and never edit the installed copies from this skill.
 
 ```sh
+# macOS / Linux
 mkdir -p "${HERDR_CORE_TEMPLATES:-$HOME/.config/herdr-core/templates}"
 for f in <this skill dir>/templates/*.md; do
   cp -n "$f" "${HERDR_CORE_TEMPLATES:-$HOME/.config/herdr-core/templates}/"
 done
 hc templates --json   # must list sdlc, spec, build, review, deliver
+```
+
+```powershell
+# Windows
+$target = if ($env:HERDR_CORE_TEMPLATES) { $env:HERDR_CORE_TEMPLATES } else { "$env:APPDATA\herdr-core\templates" }
+New-Item -ItemType Directory -Force -Path $target | Out-Null
+Copy-Item "<this skill dir>\templates\*.md" $target -ErrorAction SilentlyContinue
+hc templates --json
 ```
 
 ## 2. Preflight — run it, report only what fails
